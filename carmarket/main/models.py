@@ -1,6 +1,7 @@
 from django.db import models
 from django_countries.fields import CountryField
 
+
 class DefaultMixin(models.Model):
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -10,48 +11,55 @@ class DefaultMixin(models.Model):
         abstract = True
 
 
-class Brands(DefaultMixin):
-    name = models.CharField(max_length=100)
-
-
 class Buyer(DefaultMixin):
     name = models.CharField(max_length=100)
     email = models.CharField(max_length=100)
-    cash = models.DecimalField(max_digits=10, decimal_places=2)
+    balance = models.DecimalField(max_digits=10, decimal_places=2)
+
+
+class Seller(DefaultMixin):
+    name = models.CharField(max_length=100)
+    description = models.TextField()
+    balance = models.DecimalField(max_digits=10, decimal_places=2)
 
 
 class Showroom(DefaultMixin):
     name = models.CharField(max_length=100)
     location = CountryField()
-    cash = models.DecimalField(max_digits=10, decimal_places=2)
-    brands = models.ManyToManyField(Brands, related_name='brands')
+    balance = models.DecimalField(max_digits=10, decimal_places=2)
+    seller = models.ManyToManyField(Seller, related_name='brands')
 
 
-class CarsInShowroom(DefaultMixin):
-    brand = models.ForeignKey(Brands, on_delete=models.CASCADE, related_name='cars_in_showroom')
-    showroom = models.ForeignKey(Showroom, on_delete=models.CASCADE, related_name='showrooms')
+
+class Car(DefaultMixin):
     model = models.CharField(max_length=100)
     description = models.TextField()
     price = models.DecimalField(max_digits=10, decimal_places=2)
+    seller = models.ForeignKey(Seller, on_delete=models.CASCADE,
+                               related_name='seller_id', null=True)
+    showroom = models.ForeignKey(Showroom, on_delete=models.CASCADE,
+                                 related_name='showroom_id', null=True)
+
 
 
 class Order(DefaultMixin):
-    buyer = models.ForeignKey(Buyer, related_name='buy',
-                              on_delete=models.PROTECT)
+    description = models.TextField()
+    balance = models.DecimalField(max_digits=10, decimal_places=2)
+    buyer = models.ForeignKey(Buyer, related_name='buyer',
+                              on_delete=models.PROTECT, null=True)
     showroom = models.ForeignKey(Showroom, related_name='showroom',
-                                 on_delete=models.PROTECT)
+                                 on_delete=models.PROTECT, null=True)
+    seller = models.ForeignKey(Seller, related_name='seller',
+                               on_delete=models.PROTECT, null=True)
 
 
-class Seller(DefaultMixin):
-    brand = models.ForeignKey(Brands, related_name='brand',
-                              on_delete=models.CASCADE)
+class Sale(DefaultMixin):
     name = models.CharField(max_length=100)
     description = models.TextField()
-
-
-class CarInSeller(DefaultMixin):
-    brand = models.ForeignKey(Brands, on_delete=models.CASCADE, related_name='cars_in_seller')
-    seller = models.ForeignKey(Seller, on_delete=models.CASCADE, related_name='seller')
-    model = models.CharField(max_length=100)
-    description = models.TextField()
-    price = models.DecimalField(max_digits=10, decimal_places=2)
+    discount = models.DecimalField(max_digits=5, decimal_places=2)
+    date_start = models.DateField()
+    date_end = models.DateField()
+    showroom = models.ForeignKey(Buyer, on_delete=models.CASCADE,
+                              related_name='to_showroom')
+    seller = models.ForeignKey(Buyer, on_delete=models.CASCADE,
+                              related_name='from_seller')
