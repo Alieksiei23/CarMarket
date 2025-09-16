@@ -13,20 +13,20 @@ class DefaultMixin(models.Model):
 
 class Buyer(DefaultMixin):
     name = models.CharField(max_length=128)
-    email = models.CharField(max_length=128)
-    balance = models.DecimalField(max_digits=8, decimal_places=2)
+    email = models.EmailField(max_length=128)
+    balance = models.FloatField(max_length=16)
 
 
 class Seller(DefaultMixin):
     name = models.CharField(max_length=128)
     description = models.TextField()
-    balance = models.DecimalField(max_digits=8, decimal_places=2)
+    balance = models.FloatField(max_length=16)
 
 
 class Showroom(DefaultMixin):
     name = models.CharField(max_length=128)
     location = CountryField()
-    balance = models.DecimalField(max_digits=8, decimal_places=2)
+    balance = models.FloatField(max_length=16)
     seller = models.ManyToManyField(Seller, related_name='brands')
 
 
@@ -34,7 +34,7 @@ class Showroom(DefaultMixin):
 class Car(DefaultMixin):
     model = models.CharField(max_length=128)
     description = models.TextField()
-    price = models.DecimalField(max_digits=8, decimal_places=2)
+    price = models.FloatField(max_length=16)
     seller = models.ForeignKey(Seller, on_delete=models.CASCADE,
                                related_name='seller_id', null=True)
     showroom = models.ForeignKey(Showroom, on_delete=models.CASCADE,
@@ -44,7 +44,7 @@ class Car(DefaultMixin):
 
 class Order(DefaultMixin):
     description = models.TextField()
-    balance = models.DecimalField(max_digits=8, decimal_places=2)
+    price = models.FloatField(max_length=16)
     buyer = models.ForeignKey(Buyer, related_name='buyer',
                               on_delete=models.PROTECT, null=True)
     showroom = models.ForeignKey(Showroom, related_name='showroom',
@@ -56,7 +56,7 @@ class Order(DefaultMixin):
 class Sale(DefaultMixin):
     name = models.CharField(max_length=128)
     description = models.TextField()
-    discount = models.DecimalField(max_digits=8, decimal_places=2)
+    discount = models.FloatField(max_length=16)
     date_start = models.DateField()
     date_end = models.DateField()
     showroom = models.ForeignKey(Buyer, on_delete=models.CASCADE,
