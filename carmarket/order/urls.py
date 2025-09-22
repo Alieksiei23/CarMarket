@@ -5,8 +5,6 @@ from order.views import OrderViewSet
 
 
 router = routers.SimpleRouter()
-router.register(r'', OrderViewSet)
+router.register(r"", OrderViewSet)
 
-urlpatterns = [
-    path('', include(router.urls))
-]
+urlpatterns = [path("", include(router.urls))]

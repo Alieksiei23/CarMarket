@@ -2,8 +2,8 @@ from django.apps import AppConfig
 
 
 class AuthcoreConfig(AppConfig):
-    default_auto_field = 'django.db.models.BigAutoField'
-    name = 'authcore'
+    default_auto_field = "django.db.models.BigAutoField"
+    name = "authcore"
 
     def ready(self):
         from authcore import signals

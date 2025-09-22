@@ -5,10 +5,8 @@ from user.views import BuyerViewSet, SellerViewSet
 
 
 router = routers.SimpleRouter()
-router.register(r'buyer', BuyerViewSet)
-router.register(r'seller', SellerViewSet)
+router.register(r"buyer", BuyerViewSet)
+router.register(r"seller", SellerViewSet)
 
 
-urlpatterns = [
-    path('', include(router.urls))
-]
+urlpatterns = [path("", include(router.urls))]

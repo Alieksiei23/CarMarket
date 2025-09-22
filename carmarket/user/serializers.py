@@ -6,7 +6,7 @@ from user.models import Buyer, Seller
 class BuyerSerializers(serializers.ModelSerializer):
     class Meta:
         model = Buyer
-        fields = '__all__'
+        fields = "__all__"
 
 
 class SellerSerializer(serializers.ModelSerializer):
