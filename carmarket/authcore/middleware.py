@@ -8,7 +8,7 @@ from django.utils.deprecation import MiddlewareMixin
 class JWTAuthenticationMiddleware(MiddlewareMixin):
     def process_request(self, request):
         auth_header = request.headers.get("Authorization")
-        print(auth_header)
+
         if not auth_header:
             return None
 
@@ -28,7 +28,7 @@ class JWTAuthenticationMiddleware(MiddlewareMixin):
             )
         except jwt.InvalidTokenError:
             return JsonResponse(
-                {"error": "Неверный токен"}, status=status.HTTP_401_UNAUTHORIZED
+                {"error": "token isn't correct"}, status=status.HTTP_401_UNAUTHORIZED
             )
 
         return None
