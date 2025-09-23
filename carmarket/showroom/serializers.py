@@ -6,10 +6,10 @@ from showroom.models import Showroom, Sale
 class ShowroomSerializer(serializers.ModelSerializer):
     class Meta:
         model = Showroom
-        fields = "__all__"
+        fields = ["username", "balance", "email"]
 
 
 class SaleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Sale
-        fields = '__all__'
+        fields = "__all__"

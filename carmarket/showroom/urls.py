@@ -4,9 +4,7 @@ from rest_framework import routers
 from showroom.views import ShowroomViewSet, SaleViewSet
 
 router = routers.SimpleRouter()
-router.register(r'showroom', ShowroomViewSet)
-router.register(r'sale', SaleViewSet)
+router.register(r"showroom", ShowroomViewSet)
+router.register(r"sale", SaleViewSet)
 
-urlpatterns = [
-    path('', include(router.urls))
-]
+urlpatterns = [path("", include(router.urls))]
