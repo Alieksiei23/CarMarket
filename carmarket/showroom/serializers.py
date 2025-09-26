@@ -1,15 +1,9 @@
 from rest_framework import serializers
 
-from showroom.models import Showroom, Sale
+from showroom.models import Showroom
 
 
 class ShowroomSerializer(serializers.ModelSerializer):
     class Meta:
         model = Showroom
-        fields = ["username", "balance", "email"]
-
-
-class SaleSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Sale
-        fields = "__all__"
+        fields = ["username", "balance", "email", "seller", "user"]

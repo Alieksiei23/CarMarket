@@ -1,9 +1,13 @@
-from rest_framework import mixins
+from rest_framework import mixins, viewsets
+from rest_framework.response import Response
+from rest_framework.views import APIView
 from rest_framework.viewsets import GenericViewSet
 
-from main.permissions import IsAdminOrReadOnly
-from order.models import Order
-from order.serializers import OrderSerializer
+from main.permissions import IsAdminOrReadOnly, IsOwnerOrReadOnly
+from order.models import Order, Sale
+from order.serializers import OrderSerializer, SaleSerializer
+from order.tasks import offer_task
+from user.models import Buyer
 
 
 class OrderViewSet(
@@ -14,4 +18,21 @@ class OrderViewSet(
 ):
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
-    permission_classes = (IsAdminOrReadOnly,)
+    # permission_classes = (IsAdminOrReadOnly,)
+
+
+class SaleViewSet(viewsets.ModelViewSet):
+    queryset = Sale.objects.all()
+    serializer_class = SaleSerializer
+    # permission_classes = (IsOwnerOrReadOnly,)
+
+
+class OfferView(APIView):
+
+    def post(self, request):
+        user_id = int(request.user_id)
+        model = request.data['model']
+        money = int(request.data['money'])
+        offer_task.delay(user_id, model, money)
+        print(request.data)
+        return Response({"message": "success"})

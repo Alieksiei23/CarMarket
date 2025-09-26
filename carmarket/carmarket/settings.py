@@ -26,12 +26,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv("SECRET_KEY")
+SECRET_KEY = 'django-insecure-al89@t-w6mg6-qkg7eb75=d2)3o7ln@1o=q^twbfh$m)nkyhtr'     #  os.getenv("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS").split(" ")
+ALLOWED_HOSTS = ["127.0.0.1", "localhost", "0.0.0.0"]      # os.getenv("ALLOWED_HOSTS").split(" ")
 
 AUTH_USER_MODEL = "authcore.User"
 
@@ -40,6 +40,7 @@ AUTH_USER_MODEL = "authcore.User"
 INSTALLED_APPS = [
     "rest_framework",
     "django_countries",
+    "authcore",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -51,10 +52,10 @@ INSTALLED_APPS = [
     "showroom",
     "user",
     "order",
-    "authcore",
     "rest_framework_simplejwt",
     "djoser",
     "django_filters",
+    "django_celery_results"
 ]
 
 MIDDLEWARE = [
@@ -94,11 +95,11 @@ WSGI_APPLICATION = "carmarket.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": os.getenv("DB_NAME"),
-        "USER": os.getenv("DB_USER"),
-        "PASSWORD": os.getenv("DB_PASSWORD"),
-        "HOST": os.getenv("DB_HOST"),
-        "PORT": os.getenv("DB_PORT"),
+        "NAME": "carmarket",    # os.getenv("DB_NAME"),
+        "USER": "postgres",     # os.getenv("DB_USER"),
+        "PASSWORD": "qwerty",   # os.getenv("DB_PASSWORD"),
+        "HOST": "postgres",  # os.getenv("DB_HOST"),
+        "PORT": 5432,   # os.getenv("DB_PORT"),
     }
 }
 
@@ -163,11 +164,22 @@ EMAIL_USE_SSL = True
 DEFAULT_FROM_EMAIL = os.getenv("EMAIL_HOST_USER")
 
 
+CELERY_BROKER_URL = 'redis://localhost:6379/0'            # 'redis://' + os.getenv('REDIS_HOST') + ':' + os.getenv('REDIS_PORT') + '/0'
+CELERY_BROKER_TRANSPORT_OPTIONS = {'visibility_timeout': 3600}
+CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
+# CELERY_TASK_TRACK_STARTED = True
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+
+
+
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework_simplejwt.authentication.JWTAuthentication",
     ),
-    "DEFAULT_FILTER_BACKENDS": ("django_filters.rest_framework.DjangoFilterBackend",
+    "DEFAULT_FILTER_BACKENDS": (
+        "django_filters.rest_framework.DjangoFilterBackend",
     ),
 }
 

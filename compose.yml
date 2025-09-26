@@ -1,14 +1,42 @@
+#version: '3.8'
+#
+#services:
+#  postgres:
+#    image: postgres:17-alpine
+#    container_name: psgr
+#    environment:
+#      POSTGRES_DB: carmarket
+#      POSTGRES_USER: postgres
+#      POSTGRES_PASSWORD: qwerty
+#    ports:
+#      - "5432:5432"
+#
+#  carmarket:
+#    build:
+#      context: ./carmarket
+#    ports:
+#      - "8000:8000"
+#    depends_on:
+#      - postgres
+#    environment:
+#      DB_NAME: "carmarket"
+#      DB_USER: "postgres"
+#      DB_PASSWORD: "qwerty"
+#      DB_HOST: "postgres"
+#      DB_PORT: 5432
+
+
+
 services:
   carmarket:
-    build: ./carmarket
+    build: .
     image: superimage
     container_name: supercontainer
     restart: always
-    command: "python manage.py runserver 0.0.0.0:8000"
     env_file:
       - .env
     links:
-      - "postgres:dbps"
+      - "postgres:postgres"
     networks:
       - dbnet
     volumes:
@@ -18,17 +46,54 @@ services:
     depends_on:
       - postgres
 
+
   postgres:
     image: postgres:17-alpine
     container_name: psgr
     volumes:
       - postgres-data:/var/lib/postgresql/data
     environment:
-      - POSTGRES_DB=${DB_NAME}
       - POSTGRES_USER=${DB_USER}
+      - POSTGRES_DB=${DB_NAME}
       - POSTGRES_PASSWORD=${DB_PASSWORD}
     networks:
       - dbnet
+    ports:
+      - "5432:5432"
+
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+
+  celery:
+    build:
+      context: .
+    command: celery -A carmarket worker --loglevel=info
+    depends_on:
+      - redis
+      - postgres
+    env_file:
+      - .env
+    links:
+      - "postgres:postgres"
+    networks:
+      - dbnet
+
+#  celery-beat:
+#    build:
+#      context: .
+#    command: celery -A carmarket beat --loglevel=info
+#    depends_on:
+#      - redis
+#      - postgres
+#    env_file:
+#      - .env
+#    links:
+#      - "postgres:postgres"
+#    networks:
+#      - dbnet
+
 
 networks:
   dbnet:
@@ -36,3 +101,119 @@ networks:
 
 volumes:
   postgres-data:
+
+
+
+
+
+#services:
+#  carmarket:
+#    build: ./carmarket
+#    image: superimage
+#    container_name: supercontainer
+#    restart: always
+#    command: "python manage.py runserver 0.0.0.0:8000"
+#    env_file:
+#      - .env
+#    links:
+#      - "postgres:dbps"
+##    networks:
+##      - dbnet
+#    volumes:
+#      - ./carmarket:/app
+#    ports:
+#      - "8000:8000"
+#    depends_on:
+#      - postgres
+#      - redis
+#
+#  postgres:
+#    image: postgres:17-alpine
+#    container_name: psgr
+#    volumes:
+#      - postgres-data:/var/lib/postgresql/data
+#    environment:
+#      - POSTGRES_DB=${DB_NAME}
+#      - POSTGRES_USER=${DB_USER}
+#      - POSTGRES_PASSWORD=${DB_PASSWORD}
+##    networks:
+##      - dbnet
+#    ports:
+#      - "5432:5432"
+#
+#  redis:
+#    image: redis:7-alpine
+#    container_name: redis-cache
+#    restart: always
+#    networks:
+#      - dbnet
+#    volumes:
+#      - redis-data:/data
+#    ports:
+#      - "6379:6379"
+#
+#  celery:
+#    build: ./carmarket
+#    image: superimage3
+#    container_name: celery-worker
+#    restart: always
+#    command: "celery -A carmarket worker --loglevel=info"
+#    env_file:
+#      - .env
+#    networks:
+#      - dbnet
+#    volumes:
+#      - ./carmarket:/app
+#    depends_on:
+#      - postgres
+#      - redis
+#    links:
+#      - "postgres:dbps"
+#      - "redis:redis"
+#
+#  celery-beat:
+#    build: ./carmarket
+#    image: superimage1
+#    container_name: celery-beat
+#    restart: always
+#    command: "celery -A carmarket beat --loglevel=info"
+#    env_file:
+#      - .env
+#    networks:
+#      - dbnet
+#    volumes:
+#      - ./carmarket:/app
+#    depends_on:
+#      - postgres
+#      - redis
+#    links:
+#      - "postgres:dbps"
+#      - "redis:redis"
+#
+#  flower:
+#    build: ./carmarket
+#    image: superimage2
+#    container_name: flower-monitor
+#    restart: always
+#    command: "celery -A carmarket flower"
+#    env_file:
+#      - .env
+#    networks:
+#      - dbnet
+#    volumes:
+#      - ./carmarket:/app
+#    ports:
+#      - "5555:5555"
+#    depends_on:
+#      - redis
+#      - celery
+#    links:
+#      - "redis:redis"
+#
+#networks:
+#  dbnet:
+#    driver: bridge
+#
+#volumes:
+#  postgres-data:
+#  redis-data:
