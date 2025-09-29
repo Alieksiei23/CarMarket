@@ -55,7 +55,8 @@ INSTALLED_APPS = [
     "rest_framework_simplejwt",
     "djoser",
     "django_filters",
-    "django_celery_results"
+    "django_celery_results",
+    "stats",
 ]
 
 MIDDLEWARE = [
@@ -98,7 +99,7 @@ DATABASES = {
         "NAME": "carmarket",    # os.getenv("DB_NAME"),
         "USER": "postgres",     # os.getenv("DB_USER"),
         "PASSWORD": "qwerty",   # os.getenv("DB_PASSWORD"),
-        "HOST": "postgres",  # os.getenv("DB_HOST"),
+        "HOST": "localhost",  # os.getenv("DB_HOST"),
         "PORT": 5432,   # os.getenv("DB_PORT"),
     }
 }

@@ -25,4 +25,5 @@ urlpatterns = [
     path("api/v1/", include("order.urls")),
     path("api/v1/auth/", include("authcore.urls")),
     path("api/v1/car/", include("car.urls")),
+    path("api/v1/stats/", include("stats.urls")),
 ]

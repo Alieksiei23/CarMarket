@@ -6,4 +6,5 @@ from showroom.models import Showroom
 class ShowroomSerializer(serializers.ModelSerializer):
     class Meta:
         model = Showroom
-        fields = ["username", "balance", "email", "seller", "user"]
+        fields = "__all__"
+        # fields = ["username", "balance", "email", "seller", "user"]
