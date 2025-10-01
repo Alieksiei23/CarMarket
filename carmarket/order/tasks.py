@@ -7,62 +7,67 @@ from showroom.models import Showroom
 from car.models import Car
 from user.models import Seller, Buyer
 
-
-def order_by_showroom(id_showroom: int, model: str) -> None:
-    """"
-    buy the same model of car from a seller, that the buyer bought from a showroom
-    """
-    showroom = Showroom.objects.get(pk=id_showroom)
-    users = {i.user_id: i.id for i in showroom.seller.all()}
-    discounts = {i.seller.id: i.discount for i in Sale.objects.filter(showroom=id_showroom)}
-    cars = []
-
-    for car in Car.objects.filter(user__in=users.keys()):
-
-        if not car.is_active or car.model != model:
-            continue
-
-        price = car.price
-
-        if car.user_id in discounts:
-            price = car.price * discounts[car.user_id] / 100
-
-        cars.append((car, price))
-
-    car, price = min(cars, key=lambda x: x[1])
-
-    showroom.balance -= price
-    showroom.save()
-    seller_id = users[car.user_id]
-    seller = Seller.objects.get(pk=seller_id)
-    seller.balance += price
-    seller.save()
-    car.delete()
-    order = Order.objects.create(model=model, description="buy_car_in_seller",
-                  price=price, showroom=showroom,
-                  seller=seller)
-
-
 @shared_task
-def from_showroom_to_seller_task():
+def offer_task2(a, b):
+    c = a + b
+    return {"message": "offer success"}
 
-    now = timezone.now()
-    time = now - timedelta(minutes=10)
 
-    orders_by_buyer = Order.objects.filter(
-        created_at__range=(time, now),
-        seller__isnull=True
-    )
-
-    if not orders_by_buyer:
-        return {"message": "there have been no orders for the last ten minutes"}
-
-    for order in orders_by_buyer:
-        model = order.model
-        id_showroom = order.showroom.id
-        order_by_showroom(id_showroom, model)
-
-    return {"message": "orders executed"}
+# def order_by_showroom(id_showroom: int, model: str) -> None:
+#     """"
+#     buy the same model of car from a seller, that the buyer bought from a showroom
+#     """
+#     showroom = Showroom.objects.get(pk=id_showroom)
+#     users = {i.user_id: i.id for i in showroom.seller.all()}
+#     discounts = {i.seller.id: i.discount for i in Sale.objects.filter(showroom=id_showroom)}
+#     cars = []
+#
+#     for car in Car.objects.filter(user__in=users.keys()):
+#
+#         if not car.is_active or car.model != model:
+#             continue
+#
+#         price = car.price
+#
+#         if car.user_id in discounts:
+#             price = car.price * discounts[car.user_id] / 100
+#
+#         cars.append((car, price))
+#
+#     car, price = min(cars, key=lambda x: x[1])
+#
+#     showroom.balance -= price
+#     showroom.save()
+#     seller_id = users[car.user_id]
+#     seller = Seller.objects.get(pk=seller_id)
+#     seller.balance += price
+#     seller.save()
+#     car.delete()
+#     order = Order.objects.create(model=model, description="buy_car_in_seller",
+#                   price=price, showroom=showroom,
+#                   seller=seller)
+#
+#
+# @shared_task
+# def from_showroom_to_seller_task():
+#
+#     now = timezone.now()
+#     time = now - timedelta(minutes=10)
+#
+#     orders_by_buyer = Order.objects.filter(
+#         created_at__range=(time, now),
+#         seller__isnull=True
+#     )
+#
+#     if not orders_by_buyer:
+#         return {"message": "there have been no orders for the last ten minutes"}
+#
+#     for order in orders_by_buyer:
+#         model = order.model
+#         id_showroom = order.showroom.id
+#         order_by_showroom(id_showroom, model)
+#
+#     return {"message": "orders executed"}
 #
 #
 # @shared_task
@@ -90,6 +95,8 @@ def from_showroom_to_seller_task():
 
 descript = 'buy car throught offer'
 
+
+
 @shared_task
 def offer_task(user_id, model, max_price):
     """
@@ -100,18 +107,18 @@ def offer_task(user_id, model, max_price):
 
     if buyer.balance >= max_price:
         car = Car.objects.filter(model=model, price__lte=max_price,
-                                 showroom__isnull=False, is_active=True
+                                 user_id=4, is_active=True
                                  ).order_by('price')[0]
+
         if car:
             car.is_active = False
             car.save()
             buyer.balance -= car.price
             buyer.save()
-            car.showroom.balance += car.price
-            car.showroom.save()
+            showroom = Showroom.objects.get(user_id=4)
             order = Order.objects.create(model=model, description=descript,
                                          price=car.price, buyer=buyer,
-                                         showroom=car.showroom)
+                                         showroom=showroom)
             car.delete()
             return {"message": "offer success"}
         return {"message": "there are no suitable cars available"}
