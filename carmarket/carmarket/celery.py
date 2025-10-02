@@ -23,6 +23,6 @@ app.conf.beat_schedule = {
 app.conf.beat_schedule = {
     'chose_best_seller': {
         'task': 'order.tasks.chose_best_seller',
-        'schedule': 60,
+        'schedule': 3600,
     }
 }

@@ -8,7 +8,7 @@ from user.serializers import BuyerSerializers, SellerSerializer
 class BuyerViewSet(viewsets.ModelViewSet):
     queryset = Buyer.objects.all()
     serializer_class = BuyerSerializers
-    # permission_classes = (IsAuthenticated,)
+    permission_classes = (IsAuthenticated,)
 
 
 class SellerViewSet(viewsets.ModelViewSet):

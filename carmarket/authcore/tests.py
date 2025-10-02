@@ -52,14 +52,14 @@ class TestUserRegistrationSignal(TestCase):
 
         url = '/api/v1/showroom/'
         response_showroom = self.client.get(url).data[0]
-        # self.assertEqual(response_showroom['id'], 1)
-        # self.assertEqual(response_showroom['is_active'], True)
+        self.assertEqual(response_showroom['id'], 1)
+        self.assertEqual(response_showroom['is_active'], True)
         self.assertEqual(response_showroom['username'], 'showroom_user')
         self.assertEqual(response_showroom['email'], 'showroom@test.com')
         self.assertEqual(response_showroom['balance'], 1000.0)
-        # self.assertEqual(response_showroom['user'], 1)
+        self.assertEqual(response_showroom['user'], 1)
         self.assertEqual(response_showroom['seller'], [])
-        # self.assertEqual(response_showroom['location'], "RU")
+        self.assertEqual(response_showroom['location'], "RU")
 
 
     def test_seller_registration_create_seller_profile(self):
@@ -84,4 +84,4 @@ class TestUserRegistrationSignal(TestCase):
         self.assertEqual(response_seller['email'], 'seller@test.com')
         self.assertEqual(response_seller['description'], "about seller")
         self.assertEqual(response_seller['balance'], 1000.0)
-        # self.assertEqual(response_seller['user'], 1)
+        self.assertEqual(response_seller['user'], 1)
