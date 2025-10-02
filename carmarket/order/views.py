@@ -7,7 +7,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from main.permissions import IsAdminOrReadOnly, IsOwnerOrReadOnly
 from order.models import Order, Sale
 from order.serializers import OrderSerializer, SaleSerializer
-from order.tasks import offer_task, offer_task2
+from order.tasks import offer_task
 from user.models import Buyer
 from main.filters import DateFilter
 
@@ -36,6 +36,6 @@ class OfferView(APIView):
         user_id = int(request.user_id)
         model = request.data['model']
         money = int(request.data['money'])
-        offer_task2.delay(user_id, money)
+        offer_task.delay(user_id, model, money)
         print(request.data)
         return Response({"message": "success"})
