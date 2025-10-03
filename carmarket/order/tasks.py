@@ -105,7 +105,7 @@ def offer_task(user_id, model, max_price):
 
     if buyer.balance >= max_price:
         car = Car.objects.filter(model=model, price__lte=max_price,
-                                 user_id__in=[showroom.user_id for showroom in Showroom.objects.all()], is_active=True
+                                 user_id__in=Showroom.objects.all().values_list("user_id", flat=True), is_active=True
                                  ).order_by('price')[0]
 
         if car:

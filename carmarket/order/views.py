@@ -19,7 +19,7 @@ class OrderViewSet(
 ):
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
-    # permission_classes = (IsAdminOrReadOnly,)
+    permission_classes = (IsAdminOrReadOnly,)
     filter_backends = (DjangoFilterBackend,)
     filterset_class = DateFilter
 
@@ -27,7 +27,7 @@ class OrderViewSet(
 class SaleViewSet(viewsets.ModelViewSet):
     queryset = Sale.objects.all()
     serializer_class = SaleSerializer
-    # permission_classes = (IsOwnerOrReadOnly,)
+    permission_classes = (IsOwnerOrReadOnly,)
 
 
 class OfferView(APIView):
@@ -37,5 +37,4 @@ class OfferView(APIView):
         model = request.data['model']
         money = int(request.data['money'])
         offer_task.delay(user_id, model, money)
-        print(request.data)
         return Response({"message": "success"})
