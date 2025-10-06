@@ -12,7 +12,7 @@ class CarViewSet(viewsets.ModelViewSet):
     queryset = Car.objects.all()
     serializer_class = CarSerializer
     permission_classes = (IsOwnerOrReadOnly,)
-    filter_backends = (DjangoFilterBackend,SearchFilter, OrderingFilter)
+    filter_backends = (DjangoFilterBackend, SearchFilter, OrderingFilter)
     filterset_class = CarFilter
     search_fields = ['model']
     ordering_fields = ['price']

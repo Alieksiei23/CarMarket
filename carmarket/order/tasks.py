@@ -9,7 +9,7 @@ from user.models import Seller, Buyer
 
 
 
-def order_by_showroom(id_showroom: int, model: str) -> None:
+def offer_by_showroom(id_showroom: int, model: str) -> None:
     """"
     buy the same model of car from a seller, that the buyer bought from a showroom
     """
@@ -26,7 +26,7 @@ def order_by_showroom(id_showroom: int, model: str) -> None:
         price = car.price
 
         if car.user_id in discounts:
-            price = car.price * discounts[car.user_id] / 100
+            price = car.price * (1 - discounts[car.user_id] / 100)
 
         cars.append((car, price))
 
@@ -45,7 +45,7 @@ def order_by_showroom(id_showroom: int, model: str) -> None:
 
 
 @shared_task
-def from_showroom_to_seller_task():
+def buy_car_by_showroom():
 
     now = timezone.now()
     time = now - timedelta(minutes=10)
@@ -61,7 +61,7 @@ def from_showroom_to_seller_task():
     for order in orders_by_buyer:
         model = order.model
         id_showroom = order.showroom.id
-        order_by_showroom(id_showroom, model)
+        offer_by_showroom(id_showroom, model)
 
     return {"message": "orders executed"}
 
@@ -93,20 +93,20 @@ def chose_best_seller():
     return {"message": result}
 
 
-descript = 'buy car throught offer'
+
 
 @shared_task
 def offer_task(user_id, model, max_price):
     """
     selling car from showroom to buyer
     """
-
+    descript = 'buy car throught offer'
     buyer = Buyer.objects.get(user_id=user_id)
 
     if buyer.balance >= max_price:
         car = Car.objects.filter(model=model, price__lte=max_price,
                                  user_id__in=Showroom.objects.all().values_list("user_id", flat=True), is_active=True
-                                 ).order_by('price')[0]
+                                 ).order_by('price').first()
 
         if car:
             car.is_active = False

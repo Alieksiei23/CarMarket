@@ -67,4 +67,7 @@ class SellerStatsView(APIView):
 
         counter = Counter(showrooms)
 
-        return Response({"profit": profit, "models": models, "buyers": showrooms, "active_buyer": counter.most_common(5)})
+        return Response({"profit": profit,
+                         "models": models,
+                         "buyers": showrooms,
+                         "active_buyer": counter.most_common(5)})
