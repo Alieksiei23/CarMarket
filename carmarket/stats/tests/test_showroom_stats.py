@@ -1,10 +1,7 @@
-from unittest.mock import patch, MagicMock
-
-from showroom.models import Showroom
-
+from unittest.mock import patch
 
 from tests.register_fixtures import Registration
-from stats.serializers import ShowroomReportSerializer
+
 
 class ShowroomReportViewTest(Registration):
 

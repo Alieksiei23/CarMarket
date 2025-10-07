@@ -1,6 +1,5 @@
 from unittest.mock import patch, MagicMock
 
-from django.db.models import QuerySet
 
 from tests.register_fixtures import Registration
 

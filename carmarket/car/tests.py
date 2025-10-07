@@ -36,7 +36,7 @@ class TestAddCar(Registration):
 
 class TestNegativeCar(APITestCase):
     def setUp(self):
-        client = APIClient()
+        self.client = APIClient()
         self.car_data = {
             "model": "sedan",
             "price": 11000,
