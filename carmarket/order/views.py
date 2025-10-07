@@ -8,7 +8,6 @@ from main.permissions import IsAdminOrReadOnly, IsOwnerOrReadOnly
 from order.models import Order, Sale
 from order.serializers import OrderSerializer, SaleSerializer
 from order.tasks import offer_task
-from user.models import Buyer
 from main.filters import DateFilter
 
 class OrderViewSet(

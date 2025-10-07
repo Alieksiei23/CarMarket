@@ -14,8 +14,8 @@ app.autodiscover_tasks()
 
 
 app.conf.beat_schedule = {
-    'from_showroom_to_seller_task': {
-        'task': 'order.tasks.from_showroom_to_seller_task',
+    'buy_car_by_showroom': {
+        'task': 'order.tasks.buy_car_by_showroom',
         'schedule': 600,
     }
 }

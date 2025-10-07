@@ -1,5 +1,5 @@
-from django_filters import RangeFilter, DateFilter, DateFromToRangeFilter
-from django_filters.rest_framework import BaseInFilter, CharFilter, FilterSet
+from django_filters import RangeFilter, DateFromToRangeFilter
+from django_filters.rest_framework import FilterSet
 
 from car.models import Car
 from order.models import Order
