@@ -1,2 +1,6 @@
 venv
+.venv
 .env
+__pycache__/
+celerybeat-schedule
+carmarket/.coverage

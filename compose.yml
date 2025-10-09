@@ -1,0 +1,100 @@
+services:
+
+  nginx:
+    image: nginx:latest
+    container_name: nginx-server
+    restart: always
+    networks:
+      - dbnet
+    expose:
+      - 8088
+    ports:
+      - "80:8088"
+    volumes:
+      - ./carmarket/static:/app/carmarket/static
+      - ./nginx:/etc/nginx/conf.d
+      - ./nginx/logs:/var/log/nginx
+    depends_on:
+      - carmarket
+
+  carmarket:
+    build: ./carmarket
+    image: superimage
+    container_name: supercontainer
+    restart: always
+    env_file:
+      - .env
+    links:
+      - "postgres:postgres"
+    networks:
+      - dbnet
+    volumes:
+      - ./carmarket:/app # /carmarket
+    ports:
+      - "8000:8000"
+    depends_on:
+      - postgres
+
+
+  postgres:
+    image: postgres:17-alpine
+    container_name: psgr
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+    networks:
+      - dbnet
+    ports:
+      - "5432:5432"
+
+  redis:
+    image: redis
+    ports:
+      - "6379:6379"
+    networks:
+      - dbnet
+
+  celery:
+    build:
+      context: ./carmarket
+    command: celery -A carmarket worker --loglevel=info
+    depends_on:
+      - redis
+      - postgres
+    env_file:
+      - .env
+    links:
+      - "postgres:postgres"
+    networks:
+      - dbnet
+    volumes:
+      - ./carmarket:/app # /carmarket
+    working_dir: /app # /carmarket
+
+  celery-beat:
+    build:
+      context: ./carmarket
+    command: celery -A carmarket beat --loglevel=info
+    depends_on:
+      - redis
+      - postgres
+    env_file:
+      - .env
+    links:
+      - "postgres:postgres"
+    networks:
+      - dbnet
+    volumes:
+      - ./carmarket:/app # /carmarket
+    working_dir: /app # /carmarket
+
+
+networks:
+  dbnet:
+    driver: bridge
+
+volumes:
+  postgres-data:
