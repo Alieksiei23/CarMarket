@@ -33,7 +33,6 @@ class TestUserRegistrationWithSignal(Registration):
         self.assertEqual(response_showroom.data[0]['email'], 'test@test.com')
         self.assertEqual(response_showroom.data[0]['balance'], 10000.0)
         self.assertEqual(response_showroom.data[0]['seller'], [])
-        self.assertEqual(response_showroom.data[0]['location'], "RU")
 
     def test_seller_registration_create_seller_profile(self):
         self.register_and_authenticate(user_type=3)

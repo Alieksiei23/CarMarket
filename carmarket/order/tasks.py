@@ -30,23 +30,26 @@ def offer_by_showroom(id_showroom: int, model: str) -> None:
 
         cars.append((car, price))
 
-    car, price = min(cars, key=lambda x: x[1])
+    if cars:
+        car, price = min(cars, key=lambda x: x[1])
 
-    showroom.balance -= price
-    showroom.save()
-    seller_id = users[car.user_id]
-    seller = Seller.objects.get(pk=seller_id)
-    seller.balance += price
-    seller.save()
-    car.delete()
-    Order.objects.create(model=model, description="buy_car_in_seller",
-                  price=price, showroom=showroom,
-                  seller=seller)
+        showroom.balance -= price
+        showroom.save()
+        seller_id = users[car.user_id]
+        seller = Seller.objects.get(pk=seller_id)
+        seller.balance += price
+        seller.save()
+        car.delete()
+        Order.objects.create(model=model, description="buy_car_in_seller",
+                      price=price, showroom=showroom,
+                      seller=seller)
 
 
 @shared_task
 def buy_car_by_showroom():
-
+    """
+    check orders in last ten minutes
+    """
     now = timezone.now()
     time = now - timedelta(minutes=10)
 
