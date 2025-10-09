@@ -1,6 +1,24 @@
 services:
+
+  nginx:
+    image: nginx:latest
+    container_name: nginx-server
+    restart: always
+    networks:
+      - dbnet
+    expose:
+      - 8088
+    ports:
+      - "80:8088"
+    volumes:
+      - ./carmarket/static:/app/carmarket/static
+      - ./nginx:/etc/nginx/conf.d
+      - ./nginx/logs:/var/log/nginx
+    depends_on:
+      - carmarket
+
   carmarket:
-    build: .
+    build: ./carmarket
     image: superimage
     container_name: supercontainer
     restart: always
@@ -11,7 +29,7 @@ services:
     networks:
       - dbnet
     volumes:
-      - ./carmarket:/app
+      - ./carmarket:/app # /carmarket
     ports:
       - "8000:8000"
     depends_on:
@@ -33,13 +51,15 @@ services:
       - "5432:5432"
 
   redis:
-    image: redis:latest
+    image: redis
     ports:
       - "6379:6379"
+    networks:
+      - dbnet
 
   celery:
     build:
-      context: .
+      context: ./carmarket
     command: celery -A carmarket worker --loglevel=info
     depends_on:
       - redis
@@ -50,10 +70,13 @@ services:
       - "postgres:postgres"
     networks:
       - dbnet
+    volumes:
+      - ./carmarket:/app # /carmarket
+    working_dir: /app # /carmarket
 
   celery-beat:
     build:
-      context: .
+      context: ./carmarket
     command: celery -A carmarket beat --loglevel=info
     depends_on:
       - redis
@@ -64,6 +87,9 @@ services:
       - "postgres:postgres"
     networks:
       - dbnet
+    volumes:
+      - ./carmarket:/app # /carmarket
+    working_dir: /app # /carmarket
 
 
 networks:
