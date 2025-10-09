@@ -13,16 +13,14 @@ app.config_from_object('django.conf:settings', namespace='CELERY')
 app.autodiscover_tasks()
 
 
+
 app.conf.beat_schedule = {
     'buy_car_by_showroom': {
         'task': 'order.tasks.buy_car_by_showroom',
-        'schedule': 600,
-    }
-}
-
-app.conf.beat_schedule = {
+        'schedule': 60,
+    },
     'chose_best_seller': {
         'task': 'order.tasks.chose_best_seller',
-        'schedule': 3600,
+        'schedule': 65,
     }
 }

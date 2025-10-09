@@ -27,6 +27,7 @@ AUTH_USER_MODEL = "authcore.User"
 
 INSTALLED_APPS = [
     "rest_framework",
+    'drf_spectacular',
     "django_countries",
     "authcore",
     "django.contrib.admin",
@@ -128,6 +129,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
 STATIC_URL = "static/"
+STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
@@ -142,6 +144,8 @@ DJOSER = {
     "PASSWORD_RESET_CONFIRM_RETYPE": True,
     "TOKEN_MODEL": None,
     "ACTIVATION_URL": "auth/verify/{uid}/{token}/",
+    "PASSWORD_RESET_CONFIRM_URL": "auth/reset_password_confirm/{uid}/{token}/",
+    "USERNAME_RESET_CONFIRM_URL": "#/username/reset/confirm/{uid}/{token}",
 }
 
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
@@ -170,6 +174,7 @@ REST_FRAMEWORK = {
     "DEFAULT_FILTER_BACKENDS": (
         "django_filters.rest_framework.DjangoFilterBackend",
     ),
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
 
 
